@@ -1,14 +1,3 @@
-/* In case true will generate console logs */
-var CONSOLE_VERBOSE = true;
-
-/* Sort of entry point */
-function searchPublications(that) {	
-	//alert("searchPublications was called");
-	if (CONSOLE_VERBOSE) console.log("searchPublications was called");
-	readCSVFile("db.csv");	
-}
-
-/* Reading local CSV file*/
 function readCSVFile(file){
 
 	//alert(chrome.extension.getURL(file));
@@ -26,7 +15,6 @@ function readCSVFile(file){
     rawFile.send();
 }
 
-/* Getting random color in proper format*/
 function getRandomColor() {
 
     var style = 'background: ';
@@ -56,7 +44,13 @@ function getRandomColor() {
     return style;
 }
 
-/* Highlighting all possible publication on particular web page of Google Scholar*/
+function searchPublications(that) {	
+	//alert("searchPublications was called");
+	console.log("searchPublications was called");
+	//console.log("reading from file");
+	readCSVFile("db.csv");	
+}
+
 function highlightDataBase(rawDatabaseData){
 	
 	var output = "";
@@ -66,6 +60,7 @@ function highlightDataBase(rawDatabaseData){
 	
 	for (var i=0; i < lines.length; i++) {
 		if (lines[i] != 'undefined'){
+			//alert(lines[i]);
 			var parts = lines[i].split(delimToken);
 			output += parts[0] + parts[1] + "\n";
 			var tmpArr = {};
@@ -77,33 +72,48 @@ function highlightDataBase(rawDatabaseData){
 	}
 	
     for (var i=0; i < database.length; i++) {
-	
 		var title = (database[i]["title"] + "").slice(1, -1).trim();
 		var status = (database[i]["status"] + "").slice(1, -1).trim();
 		var color = getRandomColor();
 		
-		if (status == "READ")
+		//alert(title + "\n" + status);
+		
+		if (status == "READ"){
 			color = "background: rgba(100, 200, 131,1); color: #000;";
+		} 
 		
-		if (status == "UNREAD")
+		if (status == "UNREAD"){
 			color = "background: rgba(180, 13, 33,1); color: #000;";
+		} 
+
+		console.log('color: ' + color);
 		
-		chrome.tabs.executeScript(null, {code:"$(document.body).highlight('" + title + "','" + color + "')"});
-		
-		/*
 		if ( title.indexOf("_") > -1) {
-			console.log("found '_' symbols in name of the file");		
+			console.log("found '_' symbols in name of the file");
+			/*
+			var subTitles = title.split("_");
+			console.log(subTitles.length);
+			for ( var j = 0 ; j < subTitles.length; j++){
+				console.log(subTitles[j]);
+				chrome.tabs.executeScript(null,{code:"$(document.body).highlight('" + subTitles[j] + "','" + color + "')"});
+			}
+			*/
 		} else {
 			console.log("title: " + title);
+			chrome.tabs.executeScript(null, {code:"$(document.body).highlight('" + title + "','" + color + "')"});
 		}
+
+		/*
+		
 		*/
+        
     }
 
     // Scroll such that the last occurrences of the first search token is visible
     //chrome.tabs.executeScript(null,
     //{code:"$(document.body).scrollTop($(\"*:contains('"+ title  +"'):last\").offset().top)"});
 
-    window.close();
+    //window.close();
 }
 
 function clearHighlights(that) {

@@ -14,9 +14,18 @@ While searching for publications it's quite important to know in advance which e
 ```
 * Search your publications on Google Scholar (or any in other online libraries)
 * Click on "Highlight Publications"
+* Sample highlighting output
+![](./google-scholar-ordonez.png)
 * Enjoy
+
+
 
 ### Credits
 
 Base on Google Chrome extension [Find-Many-Strings](https://github.com/psankar/Find-Many-Strings), which is distributed under MIT license.
 
+###  License
+
+The MIT License (MIT) 
+
+Details in [license](LICENSE) file.
