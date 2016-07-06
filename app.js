@@ -60,21 +60,23 @@ function highlightDataBase(rawDatabaseData){
 	
 	for (var i=0; i < lines.length; i++) {
 		if (lines[i] != 'undefined'){
+			//alert(lines[i]);
 			var parts = lines[i].split(delimToken);
 			output += parts[0] + parts[1] + "\n";
 			var tmpArr = {};
-			tmpArr["title"] = parts[0];
-			tmpArr["status"] = parts[1];
+			tmpArr["title"] = (parts[0] + "").trim().toUpperCase().replace("'", "");
+			tmpArr["status"] = (parts[1] + "").trim().toUpperCase();
+			console.log("tmpArr[\"title\"]: " + tmpArr["title"]);
 			database.push(tmpArr);
 		}
 	}
 	
     for (var i=0; i < database.length; i++) {
-		var title = (database[i]["title"] + "").slice(1, -1);
-		var status = (database[i]["status"] + "").slice(1, -1).trim().toUpperCase();
+		var title = (database[i]["title"] + "").slice(1, -1).trim();
+		var status = (database[i]["status"] + "").slice(1, -1).trim();
 		var color = getRandomColor();
-		//alert(color);
-		//alert(status);
+		
+		//alert(title + "\n" + status);
 		
 		if (status == "READ"){
 			color = "background: rgba(100, 200, 131,1); color: #000;";
@@ -83,9 +85,11 @@ function highlightDataBase(rawDatabaseData){
 		if (status == "UNREAD"){
 			color = "background: rgba(180, 13, 33,1); color: #000;";
 		} 
-	
+
+		console.log('color: ' + color);
+		
 		if ( title.indexOf("_") > -1) {
-			console.log("fdsfds");
+			console.log("found '_' symbols in name of the file");
 			/*
 			var subTitles = title.split("_");
 			console.log(subTitles.length);
@@ -95,8 +99,8 @@ function highlightDataBase(rawDatabaseData){
 			}
 			*/
 		} else {
-			console.log(title);
-			chrome.tabs.executeScript(null,{code:"$(document.body).highlight('" + title + "','" + color + "')"});
+			console.log("title: " + title);
+			chrome.tabs.executeScript(null, {code:"$(document.body).highlight('" + title + "','" + color + "')"});
 		}
 
 		/*
