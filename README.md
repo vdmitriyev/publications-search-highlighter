@@ -14,11 +14,11 @@ While searching for publications it's quite important to know in advance which e
 ```
 * Search your publications on Google Scholar (or any in other online libraries)
 * Click on "Highlight Publications"
-* Sample highlighting output
-![](./google-scholar-ordonez.png)
 * Enjoy
 
+### Sample highlighting output
 
+![](./examples/google-scholar-ordonez.png)
 
 ### Credits
 
