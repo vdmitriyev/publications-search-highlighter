@@ -1,6 +1,6 @@
 ### About
 
-While searching for publications it's quite important to know in advance which exact publications are already in your personal database and which are not. Current simple Google Chrome Extension allows to much your own database and search results displayed by search engine (primary by Google Scholar). 
+While searching for publications it's quite important to know in advance which exact publications are already in your personal database and which are not. Current simple Google Chrome Extension allows to match your own publications database and searching results displayed by search engine (primary by Google Scholar)
 
 ### Usage
 
@@ -26,6 +26,6 @@ Base on Google Chrome extension [Find-Many-Strings](https://github.com/psankar/F
 
 ###  License
 
-The MIT License (MIT) 
+The MIT License (MIT)
 
 Details in [license](LICENSE) file.
