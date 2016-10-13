@@ -4,16 +4,16 @@
 
 // Called when the user clicks on the browser action.
 chrome.browserAction.onClicked.addListener(function(tab) {
-  /*
-   chrome.tabs.executeScript({
-    code: 'document.body.style.backgroundColor="red"'
+    /*
+     chrome.tabs.executeScript({
+      code: 'document.body.style.backgroundColor="red"'
+    });
+    */
+
+    chrome.tabs.executeScript(null, {file: 'app.js'}, function() {
+    console.log('Success');
+    //searchPublications();
+    console.log('Success2');
   });
-  */
-  
-  chrome.tabs.executeScript(null, {file: 'app.js'}, function() {
-	console.log('Success');
-	//searchPublications();
-	console.log('Success2');
-  });
-  
+
 });
