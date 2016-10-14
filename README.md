@@ -20,6 +20,11 @@ While searching for publications it's quite important to know in advance which e
 
 ![](./examples/google-scholar-ordonez.png)
 
+### Used Libraries and Plugins
+
+* [jQuery](https://jquery.com/)
+* [jQuery-Tabledit](https://github.com/markcell/jquery-tabledit)
+
 ### Credits
 
 Base on Google Chrome extension [Find-Many-Strings](https://github.com/psankar/Find-Many-Strings), which is distributed under MIT license.

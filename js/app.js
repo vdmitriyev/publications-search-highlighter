@@ -1,18 +1,39 @@
+var globalDatabase = [];
+
+function searchPublications(that) {
+    console.log("searchPublications was called");
+    readCSVFile("db.csv");
+}
+
+/* Reading local file with database if possible.*/
 function readCSVFile(file){
 
-    //alert(chrome.extension.getURL(file));
+    if (globalDatabase.length < 1 ){
+        var rawFile = new XMLHttpRequest();
+        rawFile.open("GET", chrome.extension.getURL(file), true);
+        rawFile.onreadystatechange = function (){
 
-    var rawFile = new XMLHttpRequest();
-    rawFile.open("GET", chrome.extension.getURL(file), true);
-    rawFile.onreadystatechange = function (){
+            if( rawFile.readyState == XMLHttpRequest.DONE && rawFile.status == 200){
+                var rawText = rawFile.responseText;
+                globalDatabase = convertDataBaseFromRawToJS(rawText);
+                //console.log(globalDatabase);
+                highlightDataBase(globalDatabase);
+            }
 
-        if( rawFile.readyState == XMLHttpRequest.DONE && rawFile.status == 200){
-            var rawText = rawFile.responseText;
-            highlightDataBase(rawText);
-        }
-    };
+            if( rawFile.readyState == XMLHttpRequest.DONE && rawFile.status != 200){
+                var msg = "Extension was not able to read database from CSV." + "\n"
+                        + "Something wrong with database file: " + chrome.runtime.getURL(file);
+                console.error(msg);
+                alert(msg);
+            }
 
-    rawFile.send();
+        };
+
+        rawFile.send();
+    } else {
+        console.log("Re-using already loaded database.");
+        highlightDataBase(globalDatabase);
+    }
 }
 
 function getRandomColor() {
@@ -44,14 +65,8 @@ function getRandomColor() {
     return style;
 }
 
-function searchPublications(that) {
-    //alert("searchPublications was called");
-    console.log("searchPublications was called");
-    //console.log("reading from file");
-    readCSVFile("db.csv");
-}
-
-function highlightDataBase(rawDatabaseData){
+/* Convert read CSV file with raw data into JavaScript array for future usage*/
+function convertDataBaseFromRawToJS(rawDatabaseData){
 
     var output = "";
     var delimToken = ";";
@@ -66,10 +81,16 @@ function highlightDataBase(rawDatabaseData){
             var tmpArr = {};
             tmpArr["title"] = (parts[0] + "").trim().toUpperCase().replace("'", "");
             tmpArr["status"] = (parts[1] + "").trim().toUpperCase();
-            console.log("tmpArr[\"title\"]: " + tmpArr["title"]);
+            //console.log("tmpArr[\"title\"]: " + tmpArr["title"]);
             database.push(tmpArr);
         }
     }
+
+    return database;
+}
+
+
+function highlightDataBase(database){
 
     for (var i=0; i < database.length; i++) {
         var title = (database[i]["title"] + "").slice(1, -1).trim();
@@ -86,7 +107,7 @@ function highlightDataBase(rawDatabaseData){
             color = "background: rgba(180, 13, 33,1); color: #000;";
         }
 
-        console.log('color: ' + color);
+        //console.log('color: ' + color);
 
         if ( title.indexOf("_") > -1) {
             console.log("found '_' symbols in name of the file");
@@ -99,13 +120,9 @@ function highlightDataBase(rawDatabaseData){
             }
             */
         } else {
-            console.log("title: " + title);
+            //console.log("title: " + title);
             chrome.tabs.executeScript(null, {code:"$(document.body).highlight('" + title + "','" + color + "')"});
         }
-
-        /*
-
-        */
 
     }
 
@@ -123,11 +140,35 @@ function clearHighlights(that) {
     window.close();
 }
 
+function editDatabaseNavigate(that) {
+    // chrome.tabs.executeScript(null,
+    //     {code:"$(document.body).removeHighlight()"});
+
+    // window.close();
+    // var codeToExecute  = "$('#editableDatabase').Tabledit({ url: 'example.php', columns: { identifier: [0, 'id'], editable: [[1, 'nickname'], [2, 'firstname'], [3, 'lastname']] }})";
+    // chrome.tabs.executeScript(null, {code: codeToExecute });
+     // $('#editableDatabase').Tabledit({
+     //        url: 'example.php',
+     //        columns: {
+     //            identifier: [0, 'id'],
+     //            editable: [[1, 'nickname'], [2, 'firstname'], [3, 'lastname']]
+     //        }
+     //    });
+     var pathToHTML = chrome.extension.getURL("editdatabase.html");
+     window.open(pathToHTML, '_blank');
+}
+
+
 document.addEventListener('DOMContentLoaded', function () {
 
-  var searchButton = document.getElementById('btnHighlightPublications');
-  searchButton.addEventListener('click', searchPublications);
+    var searchButton = document.getElementById('btnHighlightPublications');
+    searchButton.addEventListener('click', searchPublications);
 
-  var clearButton = document.getElementById('btnClearHighlights');
-  clearButton.addEventListener('click', clearHighlights);
+
+    var clearButton = document.getElementById('btnClearHighlights');
+    clearButton.addEventListener('click', clearHighlights);
+
+    var editDatabaseNavigateButton = document.getElementById('btneditDatabaseNavigate');
+    editDatabaseNavigateButton.addEventListener('click', editDatabaseNavigate);
+
 });

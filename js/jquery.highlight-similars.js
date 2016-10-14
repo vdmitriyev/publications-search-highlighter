@@ -24,6 +24,11 @@ External tools, credits, authors, licenses
 /* In case true will generate a console logs */
 var CONSOLE_VERBOSE = true;
 
+/* Writing given log to console in case configured*/
+function writeToConsoleLog(logMsg){
+    if (CONSOLE_VERBOSE) console.log(logMsg);
+}
+
 /* Computing Levenstein distance */
 String.prototype.levenstein = function(string) {
     var a = this, b = string + "", m = [], i, j, min = Math.min;
@@ -179,11 +184,7 @@ function getFullTextInTag(node){
     return fullTextToCheck;
 }
 
-/* Writing given log to console in case configured*/
-function writeToConsoleLog(logMsg){
-    if (CONSOLE_VERBOSE) console.log(logMsg);
-}
-
+/*TODO: must be optimized for a single call and not many calls*/
 jQuery.fn.highlight = function(pat, fbgcolor) {
 
     function innerHighlight(node, pat, fbgcolor) {

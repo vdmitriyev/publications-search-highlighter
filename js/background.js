@@ -11,9 +11,9 @@ chrome.browserAction.onClicked.addListener(function(tab) {
     */
 
     chrome.tabs.executeScript(null, {file: 'app.js'}, function() {
-    console.log('Success');
-    //searchPublications();
-    console.log('Success2');
-  });
+		console.log('Success');
+		//searchPublications();
+		console.log('Success2');
+	});
 
 });

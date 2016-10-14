@@ -19,3 +19,12 @@ pre.hl	{ color:#000000; background-color:#ffffff; font-size:10pt; font-family:'C
 .hl.kwc { color:#000000; font-weight:bold; }
 .hl.kwd { color:#010181; }
 
+
+.table.user-select-none {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
