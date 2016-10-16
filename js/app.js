@@ -2,7 +2,24 @@ var globalDatabase = [];
 
 function searchPublications(that) {
     console.log("searchPublications was called");
-    readCSVFile("db.csv");
+
+    // var currentLink = document.getElementById('currentLink').innerHTML;
+    // console.log(currentLink);
+    getDatabase();
+
+    //console.log(globalDatabase);
+    highlightDataBase(globalDatabase);
+}
+
+
+function getDatabase(){
+
+    if (globalDatabase.length < 1 ){
+        console.log("Loading database.");
+        readCSVFile("db.csv");
+    } else {
+        console.log("Re-using already loaded database.");
+    }
 }
 
 /* Reading local file with database if possible.*/
@@ -10,14 +27,13 @@ function readCSVFile(file){
 
     if (globalDatabase.length < 1 ){
         var rawFile = new XMLHttpRequest();
+        console.log(chrome.extension);
         rawFile.open("GET", chrome.extension.getURL(file), true);
         rawFile.onreadystatechange = function (){
 
             if( rawFile.readyState == XMLHttpRequest.DONE && rawFile.status == 200){
                 var rawText = rawFile.responseText;
                 globalDatabase = convertDataBaseFromRawToJS(rawText);
-                //console.log(globalDatabase);
-                highlightDataBase(globalDatabase);
             }
 
             if( rawFile.readyState == XMLHttpRequest.DONE && rawFile.status != 200){
@@ -30,9 +46,6 @@ function readCSVFile(file){
         };
 
         rawFile.send();
-    } else {
-        console.log("Re-using already loaded database.");
-        highlightDataBase(globalDatabase);
     }
 }
 
@@ -141,34 +154,97 @@ function clearHighlights(that) {
 }
 
 function editDatabaseNavigate(that) {
-    // chrome.tabs.executeScript(null,
-    //     {code:"$(document.body).removeHighlight()"});
-
-    // window.close();
-    // var codeToExecute  = "$('#editableDatabase').Tabledit({ url: 'example.php', columns: { identifier: [0, 'id'], editable: [[1, 'nickname'], [2, 'firstname'], [3, 'lastname']] }})";
-    // chrome.tabs.executeScript(null, {code: codeToExecute });
-     // $('#editableDatabase').Tabledit({
-     //        url: 'example.php',
-     //        columns: {
-     //            identifier: [0, 'id'],
-     //            editable: [[1, 'nickname'], [2, 'firstname'], [3, 'lastname']]
-     //        }
-     //    });
      var pathToHTML = chrome.extension.getURL("editdatabase.html");
      window.open(pathToHTML, '_blank');
 }
 
 
+function saveDatabase(that) {
+
+}
+
+function editDatabase(that) {
+
+    $('#editableDatabase').html('');
+    getDatabase();
+
+    // setting time-out, because request for local file is asynchronous
+    setTimeout(function(){
+
+        addDataToTable();
+
+        $('#editableDatabase').Tabledit({
+            url: null,
+            columns: {
+                identifier: [0, 'id'],
+                editable: [[1, 'title'], [2, 'status']]
+            }
+        });
+
+        editDatabaseButton.innerHTML = "Load Database"
+
+    }, 2000);
+
+    var editDatabaseButton = document.getElementById('btnEditDatabase');
+    if (editDatabaseButton != null){
+        editDatabaseButton.innerHTML = "Loading database (waiting ... )"
+    }
+
+}
+
+function addDataToTable(){
+
+    var tableContent = "";
+    tableContent = "<table><tr><td>Title</td><td>Status</td></tr>";
+
+    try{
+        for (var i=0; i < globalDatabase.length; i++) {
+            var title = (globalDatabase[i]["title"] + "").slice(1, -1).trim();
+            var status = (globalDatabase[i]["status"] + "").slice(1, -1).trim();
+
+            tableContent += '<tr><td>' + title + '</td><td>' + status + '</td></tr>';
+        }
+    } catch(err) {
+        console.error(err);
+    }
+
+    tableContent += "</table>"
+    //console.log(tableContent);
+    $('#editableDatabase').html(tableContent);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
 
     var searchButton = document.getElementById('btnHighlightPublications');
-    searchButton.addEventListener('click', searchPublications);
-
+    // console.log(searchButton);
+    if (searchButton != null){
+        searchButton.addEventListener('click', searchPublications);
+    }
 
     var clearButton = document.getElementById('btnClearHighlights');
-    clearButton.addEventListener('click', clearHighlights);
+    if (clearButton != null){
+        clearButton.addEventListener('click', clearHighlights);
+    }
 
-    var editDatabaseNavigateButton = document.getElementById('btneditDatabaseNavigate');
-    editDatabaseNavigateButton.addEventListener('click', editDatabaseNavigate);
+    var editDatabaseNavigateButton = document.getElementById('btnEditDatabaseNavigate');
+    if (editDatabaseNavigateButton != null){
+        editDatabaseNavigateButton.addEventListener('click', editDatabaseNavigate);
+    }
+
+    var editDatabaseButton = document.getElementById('btnEditDatabase');
+    if (editDatabaseButton != null){
+        editDatabaseButton.addEventListener('click', editDatabase);
+    }
+
+    var saveDatabaseButton = document.getElementById('btnSaveDatabase');
+    if (saveDatabaseButton != null){
+        saveDatabaseButton.addEventListener('click', saveDatabase);
+    }
+
+
 
 });
+
+// chrome.tabs.getSelected(null, function(tab) {
+//     document.getElementById('currentLink').innerHTML = tab.url;
+// });
